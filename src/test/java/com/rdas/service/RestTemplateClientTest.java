@@ -83,13 +83,11 @@ public class RestTemplateClientTest {
         assertThat(testOMapper).isNotNull();
     }
 
-
     @Test
-    public void whenCallingGetUserDetails_thenClientMakesCorrectCall()  throws Exception {
+    public void whenCallingPersona_thenClientGetsMockedPersonsCorrectly()  throws Exception {
         List<Person> persons = this.client.getPersons();
         System.out.println(persons);
         assertThat(persons.size()).isEqualTo(3);
-//        assertThat(details.getName()).isEqualTo("John Smith");
     }
 
 

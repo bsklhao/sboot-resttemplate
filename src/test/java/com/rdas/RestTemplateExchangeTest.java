@@ -1,5 +1,6 @@
 package com.rdas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.http.*;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -10,6 +11,10 @@ import org.springframework.web.client.ResponseExtractor;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * AsyncRestTemplate is Deprecated in Favour of org.springframework.web.reactive.function.client.WebClient
+ */
+@Slf4j
 public class RestTemplateExchangeTest {
 
     @Test
@@ -27,7 +32,7 @@ public class RestTemplateExchangeTest {
         //waits for the result
         ResponseEntity<String> entity = future.get();
 
-        System.out.println(entity.getBody());
+        log.info(entity.getBody());
     }
 
     @Test
@@ -47,7 +52,7 @@ public class RestTemplateExchangeTest {
 
         //waits for the result
         String result = future.get();
-        System.out.println(result);
+        log.info(result);
 
     }
 }

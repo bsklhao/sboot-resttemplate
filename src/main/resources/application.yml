@@ -1,1 +1,4 @@
-user.service.url: http://localhost:8080
+user.service.url: http://localhost:8088
+server:
+  servlet:
+    contextPath:  /rs
