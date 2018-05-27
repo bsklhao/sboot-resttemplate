@@ -5,7 +5,6 @@ import com.rdas.model.Person;
 import com.rdas.model.PersonType;
 import com.rdas.util.JsonUtility;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,13 +66,7 @@ public class RestTemplateClientTest {
     @Before
     public void setUp() throws Exception {
         peoples = new ArrayList<>();
-        peoples.add(Person.builder().type(PersonType.MALE).age(21).name("Raja").id(24).build());
-        peoples.add(Person.builder().id(1).name("Rana").age(50).type(PersonType.MALE).build());
-        peoples.add(Person.builder().id(1).name("Jennifer").age(49).type(PersonType.FEMALE).build());
-        String detailsString = testOMapper.writeValueAsString(peoples);
 
-        this.server.expect(MockRestRequestMatchers.requestTo("http://localhost:8080/persons"))
-                .andRespond(withSuccess(detailsString, MediaType.APPLICATION_JSON));
     }
 
     @Test
@@ -85,15 +78,35 @@ public class RestTemplateClientTest {
 
     @Test
     public void whenCallingPersona_thenClientGetsMockedPersonsCorrectly()  throws Exception {
-        List<Person> persons = this.client.getPersons();
+        peoples.clear();
+
+        peoples.add(Person.builder().type(PersonType.MALE).age(21).name("Raja").id(14).build());
+        peoples.add(Person.builder().id(12).name("Rana").age(50).type(PersonType.MALE).build());
+        peoples.add(Person.builder().id(19).name("Jennifer").age(49).type(PersonType.FEMALE).build());
+        String detailsString = testOMapper.writeValueAsString(peoples);
+
+        server.expect(MockRestRequestMatchers.requestTo("http://localhost:8088/persons"))
+                .andRespond(withSuccess(detailsString, MediaType.APPLICATION_JSON));
+
+
+        List<Person> persons = client.getPersons();
         System.out.println(persons);
         assertThat(persons.size()).isEqualTo(3);
     }
 
+    @Test
+    public void whenCallingGetUsersByType_ClientReturnsCorrectly()  throws Exception {
+        peoples.clear();
 
-//    @Test
-//    public void whenCallingGetUserDetails()  throws Exception {
-//        List<Person> persons = this.client.getPersonsByType(PersonType.MALE);
-//        System.out.println(persons);
-//    }
+        peoples.add(Person.builder().type(PersonType.MALE).age(21).name("Raja").id(14).build());
+        peoples.add(Person.builder().id(12).name("Rana").age(50).type(PersonType.MALE).build());
+        String detailsString = testOMapper.writeValueAsString(peoples);
+
+        server.expect(MockRestRequestMatchers.requestTo("http://localhost:8088/personsByType?type=MALE"))
+                .andRespond(withSuccess(detailsString, MediaType.APPLICATION_JSON));
+
+
+        List<Person> persons = this.client.getPersonsByType(PersonType.MALE);
+        assertThat(persons.size()).isEqualTo(2);
+    }
 }

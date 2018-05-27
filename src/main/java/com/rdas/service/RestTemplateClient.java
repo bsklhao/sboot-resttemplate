@@ -24,6 +24,16 @@ import java.util.*;
  * https://www.oodlestechnologies.com/blogs/Learn-To-Make-REST-calls-With-RestTemplate-In-Spring-Boot
  * https://howtodoinjava.com/spring/spring-restful/spring-restful-client-resttemplate-example/
  *
+ * Query parameters are added to the url after the ? mark, while a path parameter is part of the regular URL.
+ * http://mydomain.com/tom?id=1
+ * <p>tom</p> is the value of @PathParam and there is one @QueryParam with the name id and value 1
+ *
+ * To achieve the same using Spring :
+ *
+ * @PathVariable (Spring) == @PathParam (Jersey, JAX-RS),
+ *
+ * @RequestParam (Spring) == @QueryParam (Jersey, JAX-RS)
+ *
  */
 @Slf4j
 @Service
@@ -41,7 +51,6 @@ public class RestTemplateClient {
         restTemplate = templateBuilder.build();
         restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(url));
         //restTemplate.setInterceptors(Collections.singletonList(new RequestResponseLoggingInterceptor()));
-
     }
 
     public List<Person> getPersons() throws IOException {
@@ -53,9 +62,13 @@ public class RestTemplateClient {
         Map<String, Object> params = new HashMap<>();
         params.put("type", type);
 
-        ResponseEntity<Person[]> response = restTemplate.getForEntity("/persons", Person[].class, params);
-        log.info(Arrays.asList(response.getBody()).toString());
-        return restTemplate.getForObject("/persons", List.class);
+//        ResponseEntity<Person[]> response = restTemplate.getForEntity("/personsByType", Person[].class, params);
+//        log.info(Arrays.asList(response.getBody()).toString());
+//        return restTemplate.getForObject("/persons", List.class);
+        String uri = "http://localhost:8088/personsByType?type={type}";
+        Person[] personsByTypes = restTemplate.getForObject(uri, Person[].class, params);
+
+        return Arrays.asList(personsByTypes);
     }
 
     public Optional<Person> getPersonBy(Integer id, PersonType personType) {
